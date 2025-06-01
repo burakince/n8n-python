@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  buildtestpush:
+  build:
     runs-on: ubuntu-latest
 
     env:
