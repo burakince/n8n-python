@@ -1,0 +1,20 @@
+# Dot Folders
+.venv
+.git
+.github
+.pytest_cache
+.vscode
+
+# Dot Files
+.pre-commit-config.yaml
+.env
+.isort.cfg
+.flake8
+.editorconfig
+.gitattributes
+.gitignore
+.dive-ci
+
+# Files
+artifacthub-repo.yml
+docker-compose.*.yaml
