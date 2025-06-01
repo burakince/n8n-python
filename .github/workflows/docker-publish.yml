@@ -98,7 +98,7 @@ jobs:
             io.artifacthub.package.license=MIT
             io.artifacthub.package.alternative-locations=docker.io/${{ env.IMAGE_NAME }}
 
-      - name: Build Docker image
+      - name: Build image for local analysis
         id: build-docker-image
         uses: docker/build-push-action@v6
         with:
@@ -186,6 +186,19 @@ jobs:
 
       - name: Analyse Efficiency and Wastes on Image
         run: dive docker.io/${{ env.IMAGE_NAME }}:latest
+
+      - name: Ensure the image can be cross-compiled
+        if: github.event_name == 'pull_request'
+        id: build-and-push-pr
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/arm64/v8,linux/amd64
+          push: false
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Build and push Docker image
         if: github.event_name != 'pull_request' && contains(github.ref, 'refs/tags/')
