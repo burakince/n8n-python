@@ -107,11 +107,17 @@ jobs:
           context: .
           platforms: linux/arm64/v8,linux/amd64
           push: false
-          load: true  # Export the image to the local Docker daemon
+          outputs: type=docker,dest=n8n-python.tar
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: Load Docker image for amd64
+        run: docker load --input n8n-python.tar
+
+      - name: List Docker images
+        run: docker images
 
       - name: Run Snyk to check Docker image for vulnerabilities
         id: docker-image-scan
