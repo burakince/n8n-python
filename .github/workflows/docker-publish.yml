@@ -107,7 +107,7 @@ jobs:
           context: .
           platforms: linux/arm64/v8,linux/amd64
           push: false
-          # load: true
+          load: true  # Export the image to the local Docker daemon
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
