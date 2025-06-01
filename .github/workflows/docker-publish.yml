@@ -8,10 +8,8 @@ on:
     paths:
       - ".github/workflows/docker-publish.yml"
       - "Dockerfile"
-
   pull_request:
     branches: [main]
-
   workflow_dispatch:
 
 jobs:
@@ -105,19 +103,13 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          platforms: linux/arm64/v8,linux/amd64
+          platforms: linux/amd64
           push: false
-          outputs: type=oci,dest=n8n-python.tar
+          load: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-
-      - name: Load Docker image for amd64
-        run: docker load --input n8n-python.tar
-
-      - name: List Docker images
-        run: docker images
 
       - name: Run Snyk to check Docker image for vulnerabilities
         id: docker-image-scan
