@@ -189,7 +189,7 @@ jobs:
 
       - name: Ensure the image can be cross-compiled
         if: github.event_name == 'pull_request'
-        id: build-and-push-pr
+        id: cross-compile-check
         uses: docker/build-push-action@v6
         with:
           context: .
