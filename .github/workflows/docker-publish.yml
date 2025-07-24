@@ -121,11 +121,16 @@ jobs:
           image: docker.io/${{ env.IMAGE_NAME }}:latest
           args: --file=Dockerfile --severity-threshold=medium --sarif-file-output=snyk.sarif
 
-      - name: Upload result to GitHub Code Scanning
+      - name: Process Snyk SARIF file
         if: hashFiles('snyk.sarif') != ''
+        run: |
+          jq '{version: .version, runs: [(.runs | reduce .[] as $run ([]; . + [$run | .tool.driver.name = "Snyk_Container_" + (.runs | length | tostring)] | .results = ($run.results // []) | .artifacts = ($run.artifacts // []))] | .[0])}' snyk.sarif > processed_snyk.sarif
+
+      - name: Upload result to GitHub Code Scanning
+        if: hashFiles('processed_snyk.sarif') != ''
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: snyk.sarif
+          sarif_file: processed_snyk.sarif
 
       - name: Ensure the image can be cross-compiled
         if: github.event_name == 'pull_request'
