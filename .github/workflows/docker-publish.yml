@@ -131,7 +131,9 @@ jobs:
       - name: Process Snyk SARIF file
         if: hashFiles('snyk.sarif') != ''
         run: |
-          jq '{version: .version, runs: [.runs | to_entries[] | .value | .tool.driver.name = "Snyk_Container_" + (.key | tostring)]}' snyk.sarif > processed_snyk.sarif
+          jq '{version: .version, runs: [{tool: .runs[0].tool, results: (.runs[].results // [] | add)}]}' snyk.sarif > processed_snyk.sarif
+          echo "Processed SARIF tool.driver.name:"
+          jq '.runs[].tool.driver.name' processed_snyk.sarif
 
       - name: Upload result to GitHub Code Scanning
         if: hashFiles('processed_snyk.sarif') != ''
