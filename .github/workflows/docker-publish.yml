@@ -121,6 +121,13 @@ jobs:
           image: docker.io/${{ env.IMAGE_NAME }}:latest
           args: --file=Dockerfile --severity-threshold=medium --sarif-file-output=snyk.sarif
 
+      - name: Debug Snyk output
+        if: hashFiles('snyk.sarif') != ''
+        run: |
+          echo "Snyk SARIF file contents:"
+          cat snyk.sarif || echo "No valid SARIF file found"
+          jq '.' snyk.sarif || echo "JQ parsing failed"
+
       - name: Process Snyk SARIF file
         if: hashFiles('snyk.sarif') != ''
         run: |
