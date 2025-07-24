@@ -121,17 +121,17 @@ jobs:
           image: docker.io/${{ env.IMAGE_NAME }}:latest
           args: --file=Dockerfile --severity-threshold=medium --sarif-file-output=snyk.sarif
 
-      - name: Debug Snyk output
-        if: hashFiles('snyk.sarif') != ''
-        run: |
-          echo "Snyk SARIF file contents:"
-          cat snyk.sarif || echo "No valid SARIF file found"
-          jq '.' snyk.sarif || echo "JQ parsing failed"
+      # - name: Debug Snyk output
+      #   if: hashFiles('snyk.sarif') != ''
+      #   run: |
+      #     echo "Snyk SARIF file contents:"
+      #     cat snyk.sarif || echo "No valid SARIF file found"
+      #     jq '.' snyk.sarif || echo "JQ parsing failed"
 
       - name: Process Snyk SARIF file
         if: hashFiles('snyk.sarif') != ''
         run: |
-          jq '{version: .version, runs: [.runs[] | .tool.driver.name = "Snyk_Container_" + (input_filename | split(".")[0] | tostring) + "_" + (index(.runs[]) | tostring)]}' snyk.sarif > processed_snyk.sarif
+          jq '{version: .version, runs: [.runs | to_entries[] | .value | .tool.driver.name = "Snyk_Container_" + (.key | tostring)]}' snyk.sarif > processed_snyk.sarif
 
       - name: Upload result to GitHub Code Scanning
         if: hashFiles('processed_snyk.sarif') != ''
