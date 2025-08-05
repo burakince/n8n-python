@@ -1,4 +1,4 @@
-FROM n8nio/n8n:1.104.2
+FROM n8nio/n8n:1.105.2
 
 LABEL maintainer="Burak Ince <burak.ince@linux.org.tr>"
 
