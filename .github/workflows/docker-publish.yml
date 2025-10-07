@@ -139,7 +139,7 @@ jobs:
 
       - name: Upload result to GitHub Code Scanning
         if: hashFiles('processed_snyk.sarif') != ''
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: processed_snyk.sarif
 
